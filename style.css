@@ -54,3 +54,5 @@ button:disabled { background: #888; cursor: not-allowed; }
 
 .small { font-size: 14px; margin-top: 16px; text-align: center; }
 a { color: #1e3a8a; }
+button.secondary { background: #6b7280; }
+button.secondary:hover { background: #4b5563; }

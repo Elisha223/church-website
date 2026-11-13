@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - True Love Assemblies of God</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>True Love Assemblies of God</h1>
+    <h2 id="welcome">Loading...</h2>
+
+    <h3>Announcements</h3>
+    <p>Announcements will appear here soon.</p>
+
+    <button id="logoutBtn" class="secondary">Sign out</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    async function init() {
+      const { data } = await db.auth.getSession();
+      if (!data.session) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const user = data.session.user;
+      const { data: profile } = await db
+        .from("profiles")
+        .select("full_name, role")
+        .eq("id", user.id)
+        .single();
+
+      const name = profile && profile.full_name ? profile.full_name : user.email;
+      document.getElementById("welcome").textContent = "Welcome, " + name + "!";
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await db.auth.signOut();
+      window.location.href = "login.html";
+    });
+
+    init();
+  </script>
+</body>
+</html>
