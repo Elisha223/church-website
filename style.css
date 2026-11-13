@@ -56,3 +56,27 @@ button:disabled { background: #888; cursor: not-allowed; }
 a { color: #1e3a8a; }
 button.secondary { background: #6b7280; }
 button.secondary:hover { background: #4b5563; }
+a.btn {
+  display: block;
+  margin-top: 14px;
+  padding: 12px;
+  background: #1e3a8a;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 16px;
+}
+a.btn:hover { background: #152c6b; }
+a.btn.secondary { background: #6b7280; }
+
+.announcement {
+  border-left: 4px solid #1e3a8a;
+  background: #f4f6fa;
+  padding: 12px 16px;
+  margin-top: 14px;
+  border-radius: 4px;
+}
+.announcement h4 { margin: 0 0 4px; }
+.announcement .date { font-size: 12px; color: #666; margin-bottom: 8px; }
+.announcement p { margin: 0; white-space: pre-wrap; }

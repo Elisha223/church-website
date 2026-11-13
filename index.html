@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>True Love Assemblies of God</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>True Love Assemblies of God</h1>
+    <p>Welcome! We're glad you're here. Join our church family online to stay up to date with announcements and events.</p>
+
+    <h3>Service times</h3>
+    <p>Sundays: 8:00 AM (edit this with your real times)</p>
+
+    <div id="buttons">
+      <a class="btn" href="signup.html">Create an account</a>
+      <a class="btn secondary" href="login.html">Sign in</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    // If already signed in, show a dashboard button instead
+    db.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        document.getElementById("buttons").innerHTML =
+          '<a class="btn" href="dashboard.html">Go to my dashboard</a>';
+      }
+    });
+  </script>
+</body>
+</html>

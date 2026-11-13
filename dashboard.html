@@ -12,7 +12,7 @@
     <h2 id="welcome">Loading...</h2>
 
     <h3>Announcements</h3>
-    <p>Announcements will appear here soon.</p>
+    <div id="announcements"><p>Loading announcements...</p></div>
 
     <button id="logoutBtn" class="secondary">Sign out</button>
   </div>
@@ -36,6 +36,46 @@
 
       const name = profile && profile.full_name ? profile.full_name : user.email;
       document.getElementById("welcome").textContent = "Welcome, " + name + "!";
+
+      loadAnnouncements();
+    }
+
+    async function loadAnnouncements() {
+      const box = document.getElementById("announcements");
+      const { data, error } = await db
+        .from("announcements")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        box.textContent = "Could not load announcements.";
+        return;
+      }
+      if (!data.length) {
+        box.innerHTML = "<p>No announcements yet. Check back soon!</p>";
+        return;
+      }
+
+      box.innerHTML = "";
+      data.forEach((a) => {
+        const div = document.createElement("div");
+        div.className = "announcement";
+
+        const title = document.createElement("h4");
+        title.textContent = a.title;
+
+        const date = document.createElement("div");
+        date.className = "date";
+        date.textContent = new Date(a.created_at).toLocaleDateString("en-GB", {
+          day: "numeric", month: "long", year: "numeric"
+        });
+
+        const body = document.createElement("p");
+        body.textContent = a.body;
+
+        div.append(title, date, body);
+        box.appendChild(div);
+      });
     }
 
     document.getElementById("logoutBtn").addEventListener("click", async () => {
