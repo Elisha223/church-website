@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin - True Love Assemblies of God</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Panel</h1>
+    <p><a href="dashboard.html">&larr; Back to dashboard</a></p>
+
+    <h3>Post a new announcement</h3>
+    <form id="announceForm">
+      <label for="title">Title *</label>
+      <input type="text" id="title" required>
+
+      <label for="body">Message *</label>
+      <textarea id="body" rows="5" required></textarea>
+
+      <button type="submit" id="postBtn">Post announcement</button>
+      <div id="message" class="message"></div>
+    </form>
+
+    <h3>Posted announcements</h3>
+    <div id="list"><p>Loading...</p></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    const msg = document.getElementById("message");
+    let currentUser = null;
+
+    async function init() {
+      const { data } = await db.auth.getSession();
+      if (!data.session) {
+        window.location.href = "login.html";
+        return;
+      }
+      currentUser = data.session.user;
+
+      const { data: profile } = await db
+        .from("profiles")
+        .select("role")
+        .eq("id", currentUser.id)
+        .single();
+
+      if (!profile || !["admin", "pastor"].includes(profile.role)) {
+        window.location.href = "dashboard.html";
+        return;
+      }
+
+      loadList();
+    }
+
+    async function loadList() {
+      const box = document.getElementById("list");
+      const { data, error } = await db
+        .from("announcements")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        box.textContent = "Could not load announcements.";
+        return;
+      }
+      if (!data.length) {
+        box.innerHTML = "<p>No announcements yet.</p>";
+        return;
+      }
+
+      box.innerHTML = "";
+      data.forEach((a) => {
+        const div = document.createElement("div");
+        div.className = "announcement";
+
+        const title = document.createElement("h4");
+        title.textContent = a.title;
+
+        const date = document.createElement("div");
+        date.className = "date";
+        date.textContent = new Date(a.created_at).toLocaleDateString("en-GB", {
+          day: "numeric", month: "long", year: "numeric"
+        });
+
+        const body = document.createElement("p");
+        body.textContent = a.body;
+
+        const del = document.createElement("button");
+        del.textContent = "Delete";
+        del.className = "danger";
+        del.addEventListener("click", () => deleteAnnouncement(a.id));
+
+        div.append(title, date, body, del);
+        box.appendChild(div);
+      });
+    }
+
+    async function deleteAnnouncement(id) {
+      if (!confirm("Delete this announcement?")) return;
+      const { error } = await db.from("announcements").delete().eq("id", id);
+      if (error) {
+        alert("Could not delete: " + error.message);
+      } else {
+        loadList();
+      }
+    }
+
+    document.getElementById("announceForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("postBtn");
+      msg.className = "message";
+      btn.disabled = true;
+      btn.textContent = "Posting...";
+
+      const { error } = await db.from("announcements").insert({
+        title: document.getElementById("title").value.trim(),
+        body: document.getElementById("body").value.trim(),
+        created_by: currentUser.id
+      });
+
+      btn.disabled = false;
+      btn.textContent = "Post announcement";
+
+      if (error) {
+        msg.className = "message error";
+        msg.textContent = error.message;
+      } else {
+        msg.className = "message success";
+        msg.textContent = "Announcement posted!";
+        e.target.reset();
+        loadList();
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>

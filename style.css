@@ -80,3 +80,11 @@ a.btn.secondary { background: #6b7280; }
 .announcement h4 { margin: 0 0 4px; }
 .announcement .date { font-size: 12px; color: #666; margin-bottom: 8px; }
 .announcement p { margin: 0; white-space: pre-wrap; }
+button.danger {
+  width: auto;
+  margin-top: 10px;
+  padding: 6px 14px;
+  font-size: 13px;
+  background: #b91c1c;
+}
+button.danger:hover { background: #991b1b; }

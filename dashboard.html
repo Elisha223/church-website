@@ -14,6 +14,7 @@
     <h3>Announcements</h3>
     <div id="announcements"><p>Loading announcements...</p></div>
 
+    <div id="adminLink"></div>
     <button id="logoutBtn" class="secondary">Sign out</button>
   </div>
 
@@ -37,6 +38,10 @@
       const name = profile && profile.full_name ? profile.full_name : user.email;
       document.getElementById("welcome").textContent = "Welcome, " + name + "!";
 
+            if (profile && ["admin", "pastor"].includes(profile.role)) {
+        document.getElementById("adminLink").innerHTML =
+          '<a class="btn" href="admin.html">Admin panel</a>';
+      }
       loadAnnouncements();
     }
 
